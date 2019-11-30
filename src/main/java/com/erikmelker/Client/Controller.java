@@ -12,6 +12,8 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import static com.erikmelker.Common.SimpleJSONParser.ReadListOfFiles;
+
 public class Controller {
     private static int userId = 2;
 
@@ -19,7 +21,10 @@ public class Controller {
         ServerConnection connection = new ServerConnection();
         FileService service = connection.connectTo("upload");
         //uploadFile("src/main/code.png", service);
-        deleteFile(15, service);
+        //deleteFile(15, service);
+        ReadListOfFiles(service.listAllFiles()).forEach(s->{
+            System.out.println(s);
+        });
     }
 
     private static void deleteFile(int file_id, FileService service) {

@@ -7,30 +7,31 @@ import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 
 public class SimpleJSONParser {
 
     public static void main(String []args){
-        String json1 = PackageFile("file1", 898765, "melker");
-        String json2 = PackageFile("file2", 432, "erik");
-        String json3 = PackageFile("hejsan", 22222, "erik");
-        String allFiles = PackageAllFileInfo(json1+"&"+json2+"&"+json3);
+        String json1 = JSONFile("file1", 898765, "melker");
+        String json2 = JSONFile("file2", 432, "erik");
+        String json3 = JSONFile("hejsan", 22222, "erik");
+        String allFiles = PackageJSONFiles(json1+"&"+json2+"&"+json3);
 
-        String files = ReadListOfFiles(allFiles);
-        System.out.println(files);
+        ReadListOfFiles(allFiles).forEach(s ->{
+            System.out.println(s);
+        });
+
 
     }
 
-    public static String PackageFile(String filename, int size, String userName){
+    public static String JSONFile(String filename, int size, String userName){
         JSONObject obj = new JSONObject();
         obj.put("filename", filename);
         obj.put("size", size);
         obj.put("user", userName);
         return obj.toJSONString();
     }
-    public static String PackageAllFileInfo(String allFilesSepByComma){
+    public static String PackageJSONFiles(String allFilesSepByComma){
         String[] indFiles =  allFilesSepByComma.split("&");
         JSONObject obj = new JSONObject();
         JSONArray list = new JSONArray();
@@ -39,23 +40,23 @@ public class SimpleJSONParser {
         return obj.toJSONString();
     }
 
-    public static String ReadListOfFiles(String JSON){
+    public static ArrayList ReadListOfFiles(String JSON){
         JSONParser parser = new JSONParser();
+        ArrayList files= new ArrayList();
         try {
             JSONObject container = (JSONObject) parser.parse(JSON);
             JSONArray msg = (JSONArray) container.get("files");
             Iterator iterator = msg.iterator();
             int count = 0;
-            ArrayList files= new ArrayList();
             while (iterator.hasNext()) {
                 String text =  iterator.next().toString();
                 files.add(text);
             }
-            return files.toString();
+            return files;
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return "ReadListOfFiles did not work";
+        return files;
     }
 
 

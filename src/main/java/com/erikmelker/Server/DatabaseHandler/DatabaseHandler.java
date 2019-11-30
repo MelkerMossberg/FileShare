@@ -8,8 +8,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
 import java.util.List;
+
+import static com.erikmelker.Common.SimpleJSONParser.PackageJSONFiles;
+import static com.erikmelker.Common.SimpleJSONParser.JSONFile;
 
 public class DatabaseHandler {
     private static EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("FileShare");;
@@ -17,8 +19,9 @@ public class DatabaseHandler {
     public static void main( String[] args ) {
         //addUser("melker", "pass");
         //testUploadFile();
-        String username = getUsername(2);
-        System.out.println(username);
+        //String username = getUsername(2);
+        //System.out.println(username);
+        //System.out.println(listAllFiles());
 
     }
     private static void testUploadFile()  {
@@ -59,7 +62,7 @@ public class DatabaseHandler {
         }
     }
 
-    public static String getUsername(int id){
+    private static String getUsername(int id){
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
         String query = "SELECT u FROM User u WHERE u.id = :uid";
         TypedQuery<User> tq = em.createQuery(query, User.class);
@@ -69,9 +72,11 @@ public class DatabaseHandler {
             user = tq.getSingleResult();
         }catch (NoResultException e){
             System.out.println(e);
+            return null;
         }finally {
             em.close();
         }
+        assert user != null;
         return user.getUsername();
     }
 
@@ -112,13 +117,11 @@ public class DatabaseHandler {
             em.remove(file);
             et.commit();
         } catch (Exception ex) {
-            // If there is an exception rollback changes
             if (et != null) {
                 et.rollback();
             }
             ex.printStackTrace();
         } finally {
-            // Close EntityManager
             em.close();
         }
     }
@@ -126,16 +129,20 @@ public class DatabaseHandler {
     public static String listAllFiles() {
         EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
 
-        String strQuery = "SELECT f FROM UserFile f WHERE f.id IS NOT NULL";
-
-        TypedQuery<UserFile> tq = em.createQuery(strQuery, UserFile.class);
+        String strQuery1 = "SELECT f FROM UserFile f WHERE f.id IS NOT NULL";
+        TypedQuery<UserFile> tq1 = em.createQuery(strQuery1, UserFile.class);
         List<UserFile> files;
+        String JSON = null;
 
         try {
-            files = tq.getResultList();
-            files.forEach(file->{
-                file.getFname();
-            });
+            files = tq1.getResultList();
+            StringBuilder sb = new StringBuilder();
+            for (UserFile f : files) {
+                String owner = getUsername(f.getOwner());
+                if (owner != null) sb.append(JSONFile(f.getFname(), f.getFsize(), owner)).append("&");
+                else continue;
+            }
+            JSON = PackageJSONFiles(sb.toString());
         }
         catch(NoResultException ex) {
             ex.printStackTrace();
@@ -143,6 +150,8 @@ public class DatabaseHandler {
         finally {
             em.close();
         }
-        return "hej";
+        return JSON;
     }
+
+
 }

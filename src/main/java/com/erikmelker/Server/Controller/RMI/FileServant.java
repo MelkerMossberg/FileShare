@@ -3,7 +3,6 @@ package com.erikmelker.Server.Controller.RMI;
 import com.erikmelker.Common.FileService;
 import com.erikmelker.Server.DatabaseHandler.DatabaseHandler;
 
-import javax.persistence.EntityManagerFactory;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -30,8 +29,7 @@ public class FileServant extends UnicastRemoteObject implements FileService {
 
     @Override
     public String listAllFiles() throws RemoteException {
-        DatabaseHandler.listAllFiles();
-        return "nnnnnnnnn";
+        return DatabaseHandler.listAllFiles();
     }
 
 }
