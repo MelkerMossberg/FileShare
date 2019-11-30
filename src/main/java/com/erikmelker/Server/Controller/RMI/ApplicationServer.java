@@ -9,7 +9,9 @@ import java.rmi.registry.Registry;
 public class ApplicationServer {
     public static void main(String args[]) throws RemoteException {
         Registry registry = LocateRegistry.createRegistry(5099);
-        registry.rebind("upload", new FileServant());
+        //registry.rebind("filecatalog", new FileServant());
+        registry.rebind("login", new LoginServant());
         System.out.println("Server should be up and running");
     }
 }
+

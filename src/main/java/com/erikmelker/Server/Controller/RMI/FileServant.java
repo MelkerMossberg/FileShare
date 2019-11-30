@@ -1,10 +1,11 @@
 package com.erikmelker.Server.Controller.RMI;
 
 import com.erikmelker.Common.FileService;
-import com.erikmelker.Server.DatabaseHandler.DatabaseHandler;
+import com.erikmelker.Server.DatabaseHandler.FileTableHandler;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 
 public class FileServant extends UnicastRemoteObject implements FileService {
 
@@ -15,7 +16,7 @@ public class FileServant extends UnicastRemoteObject implements FileService {
     @Override
     public void uploadFile(String filename, int size, int owner, byte[] file) throws RemoteException {
         System.out.println("FileServant!");
-        DatabaseHandler.addFile(filename, size, owner, file);
+        FileTableHandler.addFile(filename, size, owner, file);
     }
 
     @Override
@@ -23,13 +24,19 @@ public class FileServant extends UnicastRemoteObject implements FileService {
         //Todo: (1) Get file info.
         //Todo: (2) Does this  user have access?
         //Todo: (2) Delete
-        DatabaseHandler.deleteFile(fid);
+        FileTableHandler.deleteFile(fid);
         System.out.println("DeleteFile Success");
     }
 
     @Override
     public String listAllFiles() throws RemoteException {
-        return DatabaseHandler.listAllFiles();
+        return FileTableHandler.listAllFiles();
     }
+
+    @Override
+    public HashMap<String, Object> getFile(int fid) throws RemoteException {
+        return FileTableHandler.getFile(fid);
+    }
+
 
 }
