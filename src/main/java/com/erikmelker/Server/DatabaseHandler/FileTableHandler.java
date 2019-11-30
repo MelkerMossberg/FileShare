@@ -19,8 +19,6 @@ import static com.erikmelker.Server.DatabaseHandler.DatabaseHandler.getEntityMan
 
 public class FileTableHandler {
 
-    //private static EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("FileShare");;
-
     public static void main( String[] args ) {
         //addUser("melker", "pass");
         //testUploadFile();
@@ -155,8 +153,7 @@ public class FileTableHandler {
             StringBuilder sb = new StringBuilder();
             for (UserFile f : files) {
                 String owner = getUsername(f.getOwner());
-                if (owner != null) sb.append(JSONFile(f.getFname(), f.getFsize(), owner)).append("&");
-                else continue;
+                if (owner != null) sb.append(JSONFile(f.getId(),f.getFname(), f.getFsize(), owner)).append("&");
             }
             JSON = PackageJSONFiles(sb.toString());
         }

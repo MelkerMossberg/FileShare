@@ -7,7 +7,6 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.erikmelker.Server.DatabaseHandler.DatabaseHandler.getEntityManager;

@@ -20,6 +20,7 @@ public class LoginServant extends UnicastRemoteObject implements LoginService {
 
     @Override
     public boolean login(String username, String password) throws RemoteException {
-        return UserTableHandler.checkPassword(username, password);
+        boolean loginSuccess = UserTableHandler.checkPassword(username, password);
+        return loginSuccess;
     }
 }

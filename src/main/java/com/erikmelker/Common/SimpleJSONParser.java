@@ -7,25 +7,17 @@ import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class SimpleJSONParser {
 
     public static void main(String []args){
-        String json1 = JSONFile("file1", 898765, "melker");
-        String json2 = JSONFile("file2", 432, "erik");
-        String json3 = JSONFile("hejsan", 22222, "erik");
-        String allFiles = PackageJSONFiles(json1+"&"+json2+"&"+json3);
-
-        ReadListOfFiles(allFiles).forEach(s ->{
-            System.out.println(s);
-        });
-
-
     }
 
-    public static String JSONFile(String filename, int size, String userName){
+    public static String JSONFile(int fid, String filename, int size, String userName){
         JSONObject obj = new JSONObject();
+        obj.put("fid", fid);
         obj.put("filename", filename);
         obj.put("size", size);
         obj.put("user", userName);
