@@ -14,11 +14,7 @@ import static com.erikmelker.Server.DatabaseHandler.DatabaseHandler.getEntityMan
 public class UserTableHandler {
     public static void main( String[] args ) {
         //getAllUsers().forEach(s->System.out.println(s));
-        try {
-            addUser("alma", "pass");
-        } catch (UsernameTakenException e) {
-            e.printStackTrace();
-        }
+        System.out.println(getUserId("melker"));
     }
 
     private static ArrayList getAllUsers() {
@@ -40,11 +36,33 @@ public class UserTableHandler {
         return userArray;
     }
 
-    public static void addUser(String username, String password) throws UsernameTakenException {
+    private static int getUserId(String name) {
+        EntityManager em = getEntityManager();
+        String strQuery1 = "SELECT u FROM User u WHERE u.username = :name";
+        TypedQuery<User> tq = em.createQuery(strQuery1, User.class);
+        tq.setParameter("name", name);
+        User user;
+        try {
+            user = tq.getSingleResult();
+            int id = user.getId();
+            return id;
+        }
+        catch(NoResultException ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            em.close();
+        }
+        return -1;
+    }
+
+    public static int addUser(String username, String password) throws UsernameTakenException {
         if (getAllUsers().contains(username))
             throw new UsernameTakenException(username);
+
         EntityManager em = getEntityManager();
         EntityTransaction et = null;
+        int userID = -1;
         try {
             et = em.getTransaction();
             et.begin();
@@ -55,6 +73,9 @@ public class UserTableHandler {
 
             em.persist(user);
             et.commit();
+
+            userID = getUserId(username);
+
         } catch (Exception ex) {
             if (et != null) {
                 et.rollback();
@@ -63,6 +84,7 @@ public class UserTableHandler {
         } finally {
             em.close();
         }
+        return userID;
     }
 
     public static int checkPassword(String username, String password) {

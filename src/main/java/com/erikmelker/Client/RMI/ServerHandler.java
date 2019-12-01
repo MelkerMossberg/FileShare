@@ -2,6 +2,7 @@ package com.erikmelker.Client.RMI;
 
 import com.erikmelker.Common.FileService;
 import com.erikmelker.Common.LoginService;
+import com.erikmelker.Server.DatabaseHandler.UsernameTakenException;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +34,16 @@ public class ServerHandler {
             // Returns int: (+) ID if correct, (-1) if wrong
             return loginService.login(username, password);
         } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return -2;
+    }
+    public int registerUser(String username, String password) {
+        LoginService loginService = connection.connectToLogin();
+        try {
+            // Returns int: (+) ID if success, (-1) if fail
+            return loginService.registerUser(username, password);
+        } catch (RemoteException | UsernameTakenException e) {
             e.printStackTrace();
         }
         return -2;
@@ -106,4 +117,6 @@ public class ServerHandler {
         }
         return res;
     }
+
+
 }

@@ -64,6 +64,11 @@ public class Controller {
                         //Todo: Implement Register
                         view.askForNewUsername();
                         String username = readKeyboardInput();
+                        view.askForNewPassword();
+                        String password = readKeyboardInput();
+                        int res = serverHandler.registerUser(username, password);
+                        userId = res;
+                        State = STATE.LISTFILES;
 
                     }else {
                         System.out.println("Input was not [1], [2]");
@@ -78,28 +83,36 @@ public class Controller {
                         State = STATE.QUIT;
                         break;
                     }
-                    if (input.equals("1")){
-                        System.out.println("Enter id of file to download.");
-                        input = readKeyboardInput();
-                        serverHandler.downloadFile(Integer.parseInt(input));
-                    }else if(input.equals("2")){
-                        System.out.println("Which file do you want to upload?");
-                        listFilesInFolder();
-                        String file = readKeyboardInput();
-                        String filepath = getFilepathFromInteger(file);
-                        System.out.println("Give others have write-access? Yes[1], No[2]");
-                        int shared = Integer.parseInt(readKeyboardInput());
-                        boolean sharedBool = (shared == 1);
-                        serverHandler.uploadFile(filepath, sharedBool);
-                        break;
-                    } else if(input.equals("3")){
-                        System.out.println("Which file do you want to delete?");
-                        input = readKeyboardInput();
-                        boolean res = serverHandler.deleteFile(Integer.parseInt(input), userId);
-                        System.out.println("Deleting worked: " + res);
-                    } else {
-                        System.out.println("Input was not [1], [2] or [3]");
-                        break;
+                    switch (input) {
+                        case "1":
+                            /*** Download***/
+                            System.out.println("Enter id of file to download.");
+                            input = readKeyboardInput();
+                            serverHandler.downloadFile(Integer.parseInt(input));
+                            break;
+
+                        case "2":
+                            /*** Upload***/
+                            System.out.println("Which file do you want to upload?");
+                            listFilesInFolder();
+                            String file = readKeyboardInput();
+                            String filepath = getFilepathFromInteger(file);
+                            System.out.println("Give others have write-access? Yes[1], No[2]");
+                            int shared = Integer.parseInt(readKeyboardInput());
+                            boolean sharedBool = (shared == 1);
+                            serverHandler.uploadFile(filepath, sharedBool);
+                            break;
+
+                        case "3":
+                            /*** Delete***/
+                            System.out.println("Which file do you want to delete?");
+                            input = readKeyboardInput();
+                            boolean res = serverHandler.deleteFile(Integer.parseInt(input), userId);
+                            System.out.println("Deleting worked: " + res);
+                            break;
+                        default:
+                            System.out.println("Input was not [1], [2] or [3]");
+                            break;
                     }
                     break;
                 case QUIT:

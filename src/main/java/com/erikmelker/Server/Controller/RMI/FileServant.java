@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class FileServant extends UnicastRemoteObject implements FileService {
 
-    protected FileServant() throws RemoteException {
+    FileServant() throws RemoteException {
         super();
     }
 

@@ -6,7 +6,6 @@ import com.erikmelker.Server.DatabaseHandler.UsernameTakenException;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
 
 public class LoginServant extends UnicastRemoteObject implements LoginService {
     protected LoginServant() throws RemoteException {
@@ -14,8 +13,8 @@ public class LoginServant extends UnicastRemoteObject implements LoginService {
     }
 
     @Override
-    public void registerUser(String username, String password) throws RemoteException, UsernameTakenException {
-        UserTableHandler.addUser(username,password);
+    public int registerUser(String username, String password) throws RemoteException, UsernameTakenException {
+        return UserTableHandler.addUser(username,password);
     }
 
     @Override
