@@ -9,5 +9,5 @@ import java.rmi.registry.Registry;
 
 public interface LoginService extends Remote {
     void registerUser(String username, String password) throws RemoteException, UsernameTakenException;
-    boolean login(String username, String password) throws RemoteException;
+    int login(String username, String password) throws RemoteException;
 }

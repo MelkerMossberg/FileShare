@@ -26,6 +26,9 @@ public class UserFile implements Serializable{
     @Column(name = "owner", nullable = false)
     private int owner;
 
+    @Column(name = "shared", nullable = false)
+    private boolean shared;
+
     public int getId() {
         return id;
     }
@@ -58,6 +61,14 @@ public class UserFile implements Serializable{
     }
     public void setOwner(int owner) {
         this.owner = owner;
+    }
+
+    public boolean getShared(){
+        return shared;
+    }
+
+    public void setShared(boolean shared){
+        this.shared = shared;
     }
 }
 

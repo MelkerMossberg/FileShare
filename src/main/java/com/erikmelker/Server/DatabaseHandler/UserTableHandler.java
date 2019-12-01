@@ -65,7 +65,7 @@ public class UserTableHandler {
         }
     }
 
-    public static boolean checkPassword(String username, String password) {
+    public static int checkPassword(String username, String password) {
         EntityManager em = getEntityManager();
         String strQuery1 = "SELECT u FROM User u WHERE u.id IS NOT NULL";
         TypedQuery<User> tq1 = em.createQuery(strQuery1, User.class);
@@ -73,8 +73,8 @@ public class UserTableHandler {
         try {
             users = tq1.getResultList();
             for (User u : users) {
-                if (u.getUsername().equals(username)){
-                    return u.getPassword().equals(password);
+                if (u.getUsername().equals(username) && u.getPassword().equals(password)){
+                    return u.getId();
                 }
             }
         }
@@ -84,6 +84,6 @@ public class UserTableHandler {
         finally {
             em.close();
         }
-        return false;
+        return -1;
     }
 }

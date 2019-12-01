@@ -50,7 +50,7 @@ public class FileTableHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        addFile( "Mapzi2", size, 1,bFile );
+        addFile( "Mapzi2", size, 1,bFile , true);
     }
 
     public static void addUser(String username, String password) {
@@ -94,7 +94,7 @@ public class FileTableHandler {
         return user.getUsername();
     }
 
-    public static void addFile( String fname, int size, int owner, byte[] file) {
+    public static void addFile( String fname, int size, int owner, byte[] file, boolean shared) {
         EntityManager em = getEntityManager();
         EntityTransaction et = null;
         try {
@@ -106,6 +106,7 @@ public class FileTableHandler {
             userFile.setFsize(size);
             userFile.setOwner(owner);
             userFile.setFile(file);
+            userFile.setShared(shared);
 
             em.persist(userFile);
             et.commit();
@@ -119,16 +120,21 @@ public class FileTableHandler {
         }
     }
 
-    public static void deleteFile(int fid) {
+    public static boolean deleteFile(int fid, int owner) {
         EntityManager em = getEntityManager();
         EntityTransaction et = null;
         UserFile file = null;
+        boolean success = false;
 
         try {
             et = em.getTransaction();
             et.begin();
+
             file = em.find(UserFile.class, fid);
-            em.remove(file);
+            if (file.getOwner() == owner){
+                em.remove(file);
+                success = true;
+            }
             et.commit();
         } catch (Exception ex) {
             if (et != null) {
@@ -138,6 +144,7 @@ public class FileTableHandler {
         } finally {
             em.close();
         }
+        return success;
     }
 
     public static String listAllFiles() {
@@ -153,7 +160,7 @@ public class FileTableHandler {
             StringBuilder sb = new StringBuilder();
             for (UserFile f : files) {
                 String owner = getUsername(f.getOwner());
-                if (owner != null) sb.append(JSONFile(f.getId(),f.getFname(), f.getFsize(), owner)).append("&");
+                if (owner != null) sb.append(JSONFile(f.getId(),f.getFname(), f.getFsize(), owner, f.getShared())).append("&");
             }
             JSON = PackageJSONFiles(sb.toString());
         }

@@ -15,12 +15,14 @@ public class SimpleJSONParser {
     public static void main(String []args){
     }
 
-    public static String JSONFile(int fid, String filename, int size, String userName){
+    public static String JSONFile(int fid, String filename, int size, String userName, boolean shared){
         JSONObject obj = new JSONObject();
         obj.put("fid", fid);
         obj.put("filename", filename);
         obj.put("size", size);
         obj.put("user", userName);
+        obj.put("user", userName);
+        obj.put("shared", shared);
         return obj.toJSONString();
     }
     public static String PackageJSONFiles(String allFilesSepByComma){

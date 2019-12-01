@@ -27,15 +27,15 @@ public class ServerHandler {
         ServerHandler serverHandler = new ServerHandler();
         serverHandler.downloadFile(17);
     }
-    public static boolean login(String username, String password){
+    public static int login(String username, String password){
         LoginService loginService = connection.connectToLogin();
         try {
-            // Returns boolean: Am I logged in now?
+            // Returns int: (+) ID if correct, (-1) if wrong
             return loginService.login(username, password);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        return false;
+        return -2;
     }
 
     private static void deleteFile(int file_id, FileService service) {
@@ -46,7 +46,7 @@ public class ServerHandler {
         }
     }
 
-    public void uploadFile(String filePath){
+    public void uploadFile(String filePath, boolean shared){
         FileService service = connection.connectToFileCatalog();
         byte[] bFile = null;
         int size = 0;
@@ -56,7 +56,8 @@ public class ServerHandler {
             bFile = Files.readAllBytes(file.toPath());
             BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
             size = (int) attr.size();
-            service.uploadFile(filename, size, userId, bFile);
+            service.uploadFile(filename, size, userId, bFile, shared);
+            System.out.println(filename + " was successfully uploaded to the server.");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -93,5 +94,16 @@ public class ServerHandler {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public boolean deleteFile(int fid, int userId) {
+        FileService fileService = connection.connectToFileCatalog();
+        boolean res = false;
+        try {
+            res = fileService.deleteFile(fid, userId);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }

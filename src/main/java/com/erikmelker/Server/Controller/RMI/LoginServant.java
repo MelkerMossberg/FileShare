@@ -19,8 +19,8 @@ public class LoginServant extends UnicastRemoteObject implements LoginService {
     }
 
     @Override
-    public boolean login(String username, String password) throws RemoteException {
-        boolean loginSuccess = UserTableHandler.checkPassword(username, password);
+    public int login(String username, String password) throws RemoteException {
+        int loginSuccess = UserTableHandler.checkPassword(username, password);
         return loginSuccess;
     }
 }

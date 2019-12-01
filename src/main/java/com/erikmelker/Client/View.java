@@ -34,13 +34,22 @@ public class View {
                 System.out.print("Id: " + jsonObject.get("fid") + "\t\t");
                 System.out.print("Name: " + jsonObject.get("filename") + "\t\t\t");
                 System.out.print("Size: " + jsonObject.get("size") + "\t\t\t");
-                System.out.println("Owner: " + jsonObject.get("user") + "\t\t");
+                System.out.print("Owner: " + jsonObject.get("user") + "\t\t\t");
+                System.out.println("Shared: " + jsonObject.get("shared") + "\t\t");
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         });
         System.out.println("********************************************************************************");
-        System.out.println("Options: [1] Download file,  [2] Upload file");
+        System.out.println("Options: [1] Download file,  [2] Upload file, [3] Delete file");
 
+    }
+
+    public void askForNewUsername() {
+        System.out.println("Please enter a username");
+    }
+
+    public void askForNewPassword() {
+        System.out.println("Please enter a password");
     }
 }
