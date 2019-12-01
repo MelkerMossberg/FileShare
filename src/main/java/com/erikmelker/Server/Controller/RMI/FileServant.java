@@ -30,8 +30,8 @@ public class FileServant extends UnicastRemoteObject implements FileService {
     }
 
     @Override
-    public HashMap<String, Object> getFile(int fid) throws RemoteException {
-        return FileTableHandler.getFile(fid);
+    public HashMap<String, Object> getFile(int fid, int user) throws RemoteException {
+        return FileTableHandler.getFile(fid, user);
     }
 
 

@@ -6,26 +6,26 @@ import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 
-public class View {
+class View {
 
-    public void printStart() {
+    void printStart() {
         System.out.println("Welcome to FileShare\n[1] Login \t\t [2] Register ");
     }
 
-    public void askForUsername() {
+    void askForUsername() {
         System.out.println("Enter username:");
     }
 
-    public void askForPassword() {
+    void askForPassword() {
         System.out.println("Enter password:");
     }
 
-    public void printFailedLogin() {
+    void printFailedLogin() {
         System.out.println("Wrong combination of username and password");
     }
 
-    public void printListOfFiles(ArrayList files) {
-        System.out.println("********************************************************************************");
+    void printListOfFiles(ArrayList files) {
+        System.out.println("***********************************************************************************************************");
 
         files.forEach(f -> {
             JSONParser parser = new JSONParser();
@@ -40,16 +40,16 @@ public class View {
                 e.printStackTrace();
             }
         });
-        System.out.println("********************************************************************************");
+        System.out.println("***********************************************************************************************************");
         System.out.println("Options: [1] Download file,  [2] Upload file, [3] Delete file");
 
     }
 
-    public void askForNewUsername() {
+    void askForNewUsername() {
         System.out.println("Please enter a username");
     }
 
-    public void askForNewPassword() {
+    void askForNewPassword() {
         System.out.println("Please enter a password");
     }
 }

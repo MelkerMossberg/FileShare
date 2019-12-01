@@ -8,5 +8,5 @@ public interface FileService extends Remote {
     void uploadFile(String filename, int size, int owner, byte[] file, boolean shared) throws RemoteException;
     boolean deleteFile(int fid, int userId) throws RemoteException;
     String listAllFiles()throws RemoteException;
-    HashMap getFile(int fid)throws RemoteException;
+    HashMap getFile(int fid, int user)throws RemoteException;
 }

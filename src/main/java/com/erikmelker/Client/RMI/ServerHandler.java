@@ -26,7 +26,7 @@ public class ServerHandler {
 
     public static void main(String []args){
         ServerHandler serverHandler = new ServerHandler();
-        serverHandler.downloadFile(17);
+        serverHandler.downloadFile(17, 2);
     }
     public static int login(String username, String password){
         LoginService loginService = connection.connectToLogin();
@@ -74,13 +74,13 @@ public class ServerHandler {
         }
     }
 
-    public void downloadFile(int fid){
+    public void downloadFile(int fid, int user){
         FileService service = connection.connectToFileCatalog();
         byte[] bytes = new byte[0];
         String filename = null;
         HashMap map = null;
         try {
-            map = service.getFile(fid);
+            map = service.getFile(fid, user);
             filename = (String) map.get("fname");
             bytes = (byte[]) map.get("file");
         } catch (RemoteException e) {

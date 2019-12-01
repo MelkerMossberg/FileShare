@@ -1,15 +1,10 @@
 package com.erikmelker.Server.DatabaseHandler;
 
+import com.erikmelker.Server.DatabaseHandler.Models.Event;
 import com.erikmelker.Server.DatabaseHandler.Models.User;
 import com.erikmelker.Server.DatabaseHandler.Models.UserFile;
 
 import javax.persistence.*;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.List;
 
@@ -28,31 +23,6 @@ public class FileTableHandler {
         //testDownloadFile(16);
     }
 
-    private static void testDownloadFile(int i) {
-        byte[] bytes = (byte[]) getFile(i).get("file");
-        Path path = Paths.get("src/main/test.png");
-        try {
-            Files.write(path, bytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void testUploadFile()  {
-        String filePath = "src/main/code.png";
-        byte[] bFile = null;
-        int size = 0;
-        try {
-            File file = new File(filePath);
-            bFile = Files.readAllBytes(file.toPath());
-            BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-            size = (int) attr.size();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        addFile( "Mapzi2", size, 1,bFile , true);
-    }
-
     public static void addUser(String username, String password) {
         EntityManager em = getEntityManager();
         EntityTransaction et = null;
@@ -65,7 +35,7 @@ public class FileTableHandler {
             user.setPassword(password);
 
             em.persist(user);
-            et.commit();
+            et.commit();;
         } catch (Exception ex) {
             if (et != null) {
                 et.rollback();
@@ -94,6 +64,24 @@ public class FileTableHandler {
         return user.getUsername();
     }
 
+    private static int getFid(String name){
+        EntityManager em = getEntityManager();
+        String query = "SELECT f FROM UserFile f WHERE f.fname = :name";
+        TypedQuery<UserFile> tq = em.createQuery(query, UserFile.class);
+        tq.setParameter("name", name);
+        UserFile file = null;
+        try{
+            file = tq.getSingleResult();
+        }catch (NoResultException e){
+            System.out.println(e);
+            return -1;
+        }finally {
+            em.close();
+        }
+        assert file != null;
+        return file.getId();
+    }
+
     public static void addFile( String fname, int size, int owner, byte[] file, boolean shared) {
         EntityManager em = getEntityManager();
         EntityTransaction et = null;
@@ -110,6 +98,7 @@ public class FileTableHandler {
 
             em.persist(userFile);
             et.commit();
+            logEvent("upload", getFid(fname),owner,owner);
         } catch (Exception ex) {
             if (et != null) {
                 et.rollback();
@@ -120,7 +109,7 @@ public class FileTableHandler {
         }
     }
 
-    public static boolean deleteFile(int fid, int owner) {
+    public static boolean deleteFile(int fid, int user) {
         EntityManager em = getEntityManager();
         EntityTransaction et = null;
         UserFile file = null;
@@ -131,9 +120,10 @@ public class FileTableHandler {
             et.begin();
 
             file = em.find(UserFile.class, fid);
-            if (file.getOwner() == owner){
+            if (file.getOwner() == user || file.getShared()){
                 em.remove(file);
                 success = true;
+                logEvent("delete", fid,user,file.getOwner());
             }
             et.commit();
         } catch (Exception ex) {
@@ -173,7 +163,7 @@ public class FileTableHandler {
         return JSON;
     }
 
-    public static HashMap<String,Object> getFile(int fid) {
+    public static HashMap<String,Object> getFile(int fid, int user) {
         EntityManager em = getEntityManager();
         String query = "SELECT f FROM UserFile f WHERE f.id = :fid";
         TypedQuery<UserFile> tq = em.createQuery(query, UserFile.class);
@@ -182,6 +172,7 @@ public class FileTableHandler {
         HashMap<String, Object> map = new HashMap<>();
         try{
             file = tq.getSingleResult();
+            logEvent("download", fid,user,file.getOwner());
         }catch (NoResultException e){
             System.out.println(e);
             return null;
@@ -192,5 +183,31 @@ public class FileTableHandler {
         map.put("fname", file.getFname());
         map.put("file", file.getFile());
         return map;
+    }
+
+    private static void logEvent(String act, int fid, int user, int owner) {
+        EntityManager em = getEntityManager();
+        EntityTransaction et = null;
+        try {
+            et = em.getTransaction();
+            et.begin();
+
+            Event event = new Event();
+            event.setAct(act);
+            event.setFid(fid);
+            event.setByUser(user);
+            event.setToUser(owner);
+            event.setTime();
+
+            em.persist(event);
+            et.commit();
+        } catch (Exception ex) {
+            if (et != null) {
+                et.rollback();
+            }
+            ex.printStackTrace();
+        } finally {
+            em.close();
+        }
     }
 }

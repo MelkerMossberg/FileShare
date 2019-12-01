@@ -88,7 +88,7 @@ public class Controller {
                             /*** Download***/
                             System.out.println("Enter id of file to download.");
                             input = readKeyboardInput();
-                            serverHandler.downloadFile(Integer.parseInt(input));
+                            serverHandler.downloadFile(Integer.parseInt(input), userId);
                             break;
 
                         case "2":
