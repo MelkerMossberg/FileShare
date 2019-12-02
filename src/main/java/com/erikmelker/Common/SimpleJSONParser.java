@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,6 +52,44 @@ public class SimpleJSONParser {
             e.printStackTrace();
         }
         return files;
+    }
+
+    public static String packageEvent(int id, String act, int fid, int byUser, int toOwner, String time){
+        JSONObject obj = new JSONObject();
+        obj.put("id", id);
+        obj.put("act", act);
+        obj.put("fid", fid);
+        obj.put("byUser", byUser);
+        obj.put("toOwner", toOwner);
+        obj.put("time", time);
+        return obj.toJSONString();
+    }
+
+    public static String PackageAllEvents(String input){
+        String[] indEvents =  input.split("&");
+        JSONObject obj = new JSONObject();
+        JSONArray list = new JSONArray();
+        list.addAll(Arrays.asList(indEvents));
+        obj.put("events",list);
+        return obj.toJSONString();
+    }
+
+    public static ArrayList parseEventsJSON(String JSON){
+        JSONParser parser = new JSONParser();
+        ArrayList events= new ArrayList();
+        try {
+            JSONObject container = (JSONObject) parser.parse(JSON);
+            JSONArray msg = (JSONArray) container.get("events");
+            Iterator iterator = msg.iterator();
+            while (iterator.hasNext()) {
+                String text =  iterator.next().toString();
+                events.add(text);
+            }
+            return events;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return events;
     }
 
 

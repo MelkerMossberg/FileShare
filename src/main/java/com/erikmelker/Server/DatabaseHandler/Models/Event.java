@@ -28,7 +28,7 @@ public class Event implements Serializable {
     private int toUser;
 
     @Column(name = "time", nullable = false)
-    private Timestamp time;
+    private String time;
 
     public int getId(){
         return id;
@@ -45,7 +45,7 @@ public class Event implements Serializable {
     public int getToUser(){
         return toUser;
     }
-    public Timestamp getTime(){
+    public String getTime(){
         return time;
     }
 
@@ -65,6 +65,6 @@ public class Event implements Serializable {
         java.util.Date javaDate = new java.util.Date();
         long javaTime = javaDate.getTime();
         java.sql.Timestamp timestamp = new java.sql.Timestamp(javaTime);
-        this.time = timestamp;
+        this.time = timestamp.toString();
     }
 }

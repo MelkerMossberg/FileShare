@@ -1,5 +1,6 @@
 package com.erikmelker.Client;
 
+import com.erikmelker.Client.RMI.Eventlistener;
 import com.erikmelker.Client.RMI.ServerHandler;
 import com.mysql.cj.jdbc.SuspendableXAConnection;
 
@@ -18,6 +19,8 @@ public class Controller {
     boolean shouldRun = true;
     private int state;
     View view = null;
+    private Eventlistener eventlistener;
+
     enum STATE {START, LOGIN, LISTFILES, QUIT}
     STATE State = STATE.START;
     int userId = -1;
@@ -61,7 +64,6 @@ public class Controller {
                             break;
                         }
                     }else if(input.equals("2")){
-                        //Todo: Implement Register
                         view.askForNewUsername();
                         String username = readKeyboardInput();
                         view.askForNewPassword();
@@ -78,6 +80,8 @@ public class Controller {
                 case LISTFILES:
                     System.out.println("Loading files...");
                     view.printListOfFiles(serverHandler.getListOfFilesJSON());
+                    this.eventlistener = new Eventlistener(serverHandler, userId);
+                    eventlistener.lookForEvents();
                     input = readKeyboardInput();
                     if (input.equals("quit")) {
                         State = STATE.QUIT;

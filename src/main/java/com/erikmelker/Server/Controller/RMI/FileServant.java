@@ -5,6 +5,7 @@ import com.erikmelker.Server.DatabaseHandler.FileTableHandler;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FileServant extends UnicastRemoteObject implements FileService {
@@ -32,6 +33,11 @@ public class FileServant extends UnicastRemoteObject implements FileService {
     @Override
     public HashMap<String, Object> getFile(int fid, int user) throws RemoteException {
         return FileTableHandler.getFile(fid, user);
+    }
+
+    @Override
+    public String getEvents(int lastIndex) throws RemoteException {
+        return FileTableHandler.getEvents(lastIndex);
     }
 
 

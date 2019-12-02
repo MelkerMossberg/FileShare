@@ -5,11 +5,11 @@ import com.erikmelker.Server.DatabaseHandler.Models.User;
 import com.erikmelker.Server.DatabaseHandler.Models.UserFile;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.erikmelker.Common.SimpleJSONParser.JSONFile;
-import static com.erikmelker.Common.SimpleJSONParser.PackageJSONFiles;
+import static com.erikmelker.Common.SimpleJSONParser.*;
 import static com.erikmelker.Server.DatabaseHandler.DatabaseHandler.getEntityManager;
 
 public class FileTableHandler {
@@ -21,6 +21,7 @@ public class FileTableHandler {
         //System.out.println(username);
         //System.out.println(listAllFiles());
         //testDownloadFile(16);
+        System.out.println(getEvents(-1));
     }
 
     public static void addUser(String username, String password) {
@@ -209,5 +210,33 @@ public class FileTableHandler {
         } finally {
             em.close();
         }
+    }
+
+    public static String getEvents(int lastIndex) {
+        EntityManager em = getEntityManager();
+
+        String strQuery1 = "SELECT e FROM Event e WHERE e.id > :pointer";
+        TypedQuery<Event> tq1 = em.createQuery(strQuery1, Event.class);
+        tq1.setParameter("pointer", lastIndex);
+        List<Event> events;
+        StringBuilder sb = new StringBuilder();
+        String JSON = null;
+
+        try {
+            events = tq1.getResultList();
+            for (Event e : events) {
+                sb.append(
+                        packageEvent(e.getId(), e.getAct(), e.getFid(), e.getByUser(), e.getToUser(), e.getTime()))
+                        .append("&");
+            }
+            JSON = PackageAllEvents(sb.toString());
+        }
+        catch(NoResultException ex) {
+            ex.printStackTrace();
+        }
+        finally {
+            em.close();
+        }
+        return JSON;
     }
 }

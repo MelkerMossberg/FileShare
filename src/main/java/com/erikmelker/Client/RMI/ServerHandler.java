@@ -119,4 +119,13 @@ public class ServerHandler {
     }
 
 
+    public String getEvents(int lastIndex) {
+        FileService fileService = connection.connectToFileCatalog();
+        try {
+            return fileService.getEvents(lastIndex);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
